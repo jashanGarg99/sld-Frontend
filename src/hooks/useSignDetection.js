@@ -1,12 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { API_CONFIG } from '../config/api';
 
 export function useSignDetection() {
   const [isDetecting, setIsDetecting] = useState(false);
+  const isDetectingRef = useRef(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
   const detectSign = useCallback(async (base64Image) => {
+    if (isDetectingRef.current) return;
+    
+    isDetectingRef.current = true;
     setIsDetecting(true);
     setError(null);
 
@@ -61,6 +65,7 @@ export function useSignDetection() {
       setError(err.message || 'Failed to connect to detection backend');
       setResult(null);
     } finally {
+      isDetectingRef.current = false;
       setIsDetecting(false);
     }
   }, []);
