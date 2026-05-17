@@ -172,6 +172,13 @@ export default function CameraFeed({ onCapture, autoCaptureInterval }) {
     return () => stopCamera();
   }, []);
 
+  // Sync stream to video element when it mounts
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream, isCameraActive]);
+
   const detectHands = useCallback(async () => {
     if (!videoRef.current || !detectorRef.current || !isCameraActive) return;
 
